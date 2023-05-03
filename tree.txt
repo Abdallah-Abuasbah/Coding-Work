@@ -1,0 +1,287 @@
+#include<bits/stdc++.h>
+using namespace std;
+template<class T>
+class Node
+{
+    private:
+        T data;
+        Node *left;
+        Node *right;
+    public:
+        Node()
+        {}
+        Node(T d,Node *l=NULL,Node *r=NULL)
+        {
+            data=d;
+            left=l;
+            right=r;
+            
+        }
+        friend ostream& operator<<(ostream &os,Node<int> *n);
+        Node* getLeft()
+        {return left;}
+        Node* getRight()
+        {return right;}
+        T getData()
+        {return data;}
+    
+};
+class MyBinaryTree
+{
+    private:
+        Node<int> *root;
+    public:
+        MyBinaryTree()
+        {root=NULL;}
+        MyBinaryTree(int d)
+        {
+            root=new Node<int>(d);
+            
+        } 
+        friend ostream& operator<<(ostream &os,Node<int> *n);
+        void print_tree(Node<int> *r)
+        {
+            if(r==NULL)
+            return;
+            print_tree(r->getLeft());
+            cout<<r;
+            print_tree(r->getRight());
+            
+        }
+        Node<int>* insert_helper(Node<int> *r,Node<int> *n)
+        {
+            Node<int> *f=NULL,*x1,*x2;
+            if(r==NULL)
+                return n;
+            if(r->getData()>n->getData())
+                {x1 = insert_helper(r->getLeft(),n);
+                f=new Node<int>(r->getData(),x1,r->getRight());
+                } 
+            if(r->getData()<n->getData())
+                {x2 = insert_helper(r->getRight(),n);
+                f=new Node<int>(r->getData(),r->getLeft(),x2);
+                    
+                }
+                return f;
+}
+void insert_node(Node<int> *n)
+{
+    root = insert_helper(root,n);
+}
+int calculate_height(Node<int> *n)
+{
+    Node<int> *temp = root;
+    int l=0;
+    while(temp->getData()!=n->getData() && temp!=NULL)
+    {
+        if(n->getData()<temp->getData())
+        temp=temp->getLeft();
+        if(n->getData()>temp->getData())
+        temp=temp->getRight();
+        l++;
+        
+    }
+    if(temp==NULL)
+    {
+        cout<<"Node not found!\n";
+        return -1;
+        
+    }
+    return l;
+}
+int helper_balance(Node<int> *r)
+{
+    if(r==NULL)
+        return 0;
+    int f = helper_balance(r->getLeft());
+    int e = helper_balance(r->getRight());
+    return abs(e-f)+1;
+    
+}
+int isBalance()
+{
+    Node<int> *temp=root;
+    int x=helper_balance(temp);
+    if(x>1)
+    return 0;
+    return 1;
+    
+}
+Node<int>* get_root()
+{return root;}
+void print_height()
+{
+    Node<int> *temp = root;
+    int l=0;
+    stack<pair<Node<int>*,int> > st;
+    st.push({root,l});
+    while(!st.empty()) // perform depth first search to print the height of each node
+    {
+        pair<Node<int>*,int> p=st.top();
+        st.pop();
+        cout<<" Node : "<<p.first->getData()<<" height : "<<p.second<<"\n";
+        if(p.first->getLeft())
+        {
+            st.push({p.first->getLeft(),p.second+1});
+            
+        }
+        if(p.first->getRight())
+        {
+            st.push({p.first->getRight(),p.second+1});
+            
+        }
+        
+    }
+    
+}
+int helper_print_k(Node<int> *r,int k)
+{
+    if(r==NULL)
+    return 0;
+    int dd = 0;
+    dd+=helper_print_k(r->getLeft(),k); // add the sum of nodes returned from left subtree;
+    dd+=helper_print_k(r->getRight(),k); // add the sum of nodes returnde from right subtree;
+    if(dd==k)
+    {
+        cout<<"Node with childrens sum equal to "<<k<<" is : "<<r->getData()<<"\n";
+        
+    }
+    return dd+r->getData();
+    
+    }
+    void printSumNodesK(Node<int> *r,int k)
+    {
+        int x= helper_print_k(r,k);
+
+        
+    }
+    void inValueRange(Node<int> *rt,int r1,int r2)// it is assumed that r1<=r2
+    {
+        stack<Node<int>* > st;
+        st.push(rt);
+        while(!st.empty()) // perform depth first search to print the height of each node
+        {
+            Node<int> *p=st.top();
+            st.pop();
+            if(p->getData()>=r1 && p->getData()<=r2)
+            {
+                cout<<"Node with value between "<<r1<<" and "<<r2<<" "<<p->getData()<<"\n";
+                
+            }
+            if(p->getLeft())
+            {
+                st.push(p->getLeft());
+                
+            }
+            if(p->getRight())
+            {
+                st.push(p->getRight());
+                
+            }
+            
+        }
+        
+    }void inLevelRange(Node<int> *r,int level1,int level2)
+    {
+        int l=0,flag=0;
+        stack<pair<Node<int>*,int> > st;
+        st.push({root,l});
+        while(!st.empty()) // perform depth first search to print the height of each node
+        {
+            pair<Node<int>*,int> p=st.top();
+            st.pop();
+            if(p.second>=level1 && p.second<=level2)
+            {
+                cout<<" Node : "<<p.first->getData()<<" level : "<<p.second;flag=1;
+                
+            }
+            if(p.first->getLeft())
+            {
+                st.push({p.first->getLeft(),p.second+1});
+                
+            }
+            if(p.first->getRight())
+            {
+                st.push({p.first->getRight(),p.second+1});
+                
+            }
+            
+        }if(flag==1)
+        {
+            cout<<"not available\n";
+            
+        }
+        
+    }
+    
+};
+ostream & operator<<(ostream &out,Node<int> *n)
+{
+    out<<n->getData()<<" ";
+    return out;
+    
+}
+int main()
+{
+    MyBinaryTree mb;
+    int ch;
+    do
+    {
+        cout<<"select choice :\n";
+        cout<<"1. insert node\n";
+        cout<<"2. print node\n";
+        cout<<"3. print height of all the nodes\n";
+        cout<<"4. is balanced?\n";
+        cout<<"5. print nodes with sum equal to k\n";
+        cout<<"6. print nodes with value in given range\n";
+        cout<<"7. print nodes within given levels\n";
+        cout<<"8. exit\n";
+        cin>>ch;
+        if(ch==1)
+        {
+            cout<<"Provide the node value\n";
+            int val;
+            cin>>val;
+            Node<int> *n=new Node<int>(val);
+            mb.insert_node(n);
+            
+        }
+        if(ch==2)
+        {
+            mb.print_tree(mb.get_root());
+            cout<<"\n";
+            
+        }
+        if(ch==3)
+        mb.print_height();
+        if(ch==4)
+        mb.isBalance();
+        if(ch==5)
+        {
+            int k;
+            cout<<"Enter the value of k\n";
+            cin>>k;
+            mb.printSumNodesK(mb.get_root(),k);
+            
+        }
+        if(ch==6)
+        {
+            int r1,r2;
+            cout<<"Provide the given range\n";
+            cin>>r1>>r2;
+            mb.inValueRange(mb.get_root(),r1,r2);
+            
+        }
+        if(ch==7)
+        {
+            int l1,l2;
+            cout<<"provide the levels\n";
+            cin>>l1>>l2;
+            mb.inLevelRange(mb.get_root(),l1,l2);
+            
+        }
+        
+    }
+    while (ch!=8);
+    
+}
